@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsd:schema xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+	xmlns="http://www.hzdrc.cn"
+	targetNamespace="http://www.hzdrc.cn"
+	elementFormDefault="qualified">
+	
+	<xsd:element name="property" type="propertyType"/>
+
+	<xsd:complexType name="propertyType">
+		<xsd:attribute name="name" type="xsd:string" use="required"/>
+		<xsd:attribute name="value" type="xsd:string" use="required"/>
+	</xsd:complexType>
+
+</xsd:schema>
