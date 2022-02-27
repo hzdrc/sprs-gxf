@@ -3,12 +3,197 @@
 	xmlns="http://www.hzdrc.cn"
 	targetNamespace="http://www.hzdrc.cn"
 	elementFormDefault="qualified">
-	
+
+	<xsd:element name="gxf" type="gxfType">
+		<xsd:unique name="table-name-uniqueness">
+			<xsd:selector xpath="table"/>
+			<xsd:field    xpath="@name"/>
+		</xsd:unique>
+	</xsd:element>
+
 	<xsd:element name="property" type="propertyType"/>
+	<xsd:element name="table" type="tableType"/>
 
 	<xsd:complexType name="propertyType">
 		<xsd:attribute name="name" type="xsd:string" use="required"/>
 		<xsd:attribute name="value" type="xsd:string" use="required"/>
 	</xsd:complexType>
 
+	<xsd:complexType name="abstractColumnType" abstract="true">
+		<xsd:choice minOccurs="0" maxOccurs="unbounded">
+			<xsd:element ref="property"/>
+		</xsd:choice>
+		<xsd:attribute name="name" type="idType" use="required"/>
+		<xsd:attribute name="canNull" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="index" type="xsd:boolean" default="true"/>
+		<xsd:attribute name="descr" type="xsd:string"/>
+		<xsd:attribute name="comment" type="xsd:string"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="refType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="table" type="idType" use="required"/>
+				<xsd:attribute name="key" type="keyType"/>
+				<xsd:attribute name="association" type="xsd:boolean" default="true"/>
+				<xsd:attribute name="update" type="referentialActionType" default="cascade"/>
+				<xsd:attribute name="delete" type="referentialActionType" default="set null"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="boolColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="primitive" type="xsd:boolean"/>
+				<xsd:attribute name="defaultValue" type="xsd:boolean" default="true"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="byteColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="primitive" type="xsd:boolean"/>
+				<xsd:attribute name="defaultValue" type="xsd:integer"/>
+				<xsd:attribute name="identity" type="idType"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="intColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="primitive" type="xsd:boolean"/>
+				<xsd:attribute name="defaultValue" type="xsd:integer"/>
+				<xsd:attribute name="identity" type="idType"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="dateColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="defaultValue" type="xsd:string"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="timeColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="defaultValue" type="xsd:string"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="datetimeColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="defaultValue" type="xsd:string"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:complexType name="varcharColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="length" type="xsd:integer" use="required"/>
+				<xsd:attribute name="defaultValue" type="xsd:string"/>
+				<xsd:attribute name="unicode" type="xsd:boolean"/>
+				<xsd:attribute name="charset" type="xsd:string"/>
+				<xsd:attribute name="collate" type="xsd:string"/>
+				<xsd:attribute name="key" type="keyType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+	
+	<xsd:complexType name="blobColumnType">
+		<xsd:complexContent>
+			<xsd:extension base="abstractColumnType">
+				<xsd:attribute name="size" type="sizeType"/>
+			</xsd:extension>
+		</xsd:complexContent>
+	</xsd:complexType>
+
+	<xsd:group name="definitionGroup">
+		<xsd:choice>
+			<xsd:element name="ref" type="refType"/>
+<!--			<xsd:element name="column" type="columnType"/>-->
+			<xsd:element name="bool" type="boolColumnType"/>
+<!--			<xsd:element name="byte" type="byteColumnType"/>-->
+<!--			<xsd:element name="short" type="shortColumnType"/>-->
+			<xsd:element name="int" type="intColumnType"/>
+<!--			<xsd:element name="long" type="longColumnType"/>-->
+<!--			<xsd:element name="decimal" type="decimalColumnType"/>-->
+<!--			<xsd:element name="double" type="doubleColumnType"/>-->
+<!--			<xsd:element name="float" type="floatColumnType"/>-->
+			<xsd:element name="date" type="dateColumnType"/>
+			<xsd:element name="time" type="timeColumnType"/>
+			<xsd:element name="datetime" type="datetimeColumnType"/>
+<!--			<xsd:element name="char" type="charColumnType"/>-->
+			<xsd:element name="varchar" type="varcharColumnType"/>
+<!--			<xsd:element name="text" type="textColumnType"/>-->
+			<xsd:element name="blob" type="blobColumnType"/>
+<!--			<xsd:element name="clob" type="clobColumnType"/>-->
+		</xsd:choice>
+	</xsd:group>
+
+	<xsd:complexType name="tableType">
+		<xsd:sequence>
+			<xsd:element ref="property" minOccurs="0" maxOccurs="unbounded"/>
+			<xsd:group ref="definitionGroup" maxOccurs="unbounded"/>
+		</xsd:sequence>
+		<xsd:attribute name="name" type="idType" use="required"/>
+		<xsd:attribute name="group" type="xsd:string"/>
+		<xsd:attribute name="type" type="idType"/>
+		<xsd:attribute name="columnPrefix" type="idType"/>
+		<xsd:attribute name="columnSuffix" type="idType"/>
+		<xsd:attribute name="descr" type="xsd:string"/>
+		<xsd:attribute name="comment" type="xsd:string"/>
+	</xsd:complexType>
+
+	<xsd:complexType name="gxfType">
+		<xsd:choice maxOccurs="unbounded" minOccurs="0">
+			<xsd:element ref="property"/>
+			<xsd:element ref="table"/>
+		</xsd:choice>
+		<xsd:attribute name="name" type="idType"/>
+	</xsd:complexType>
+
+	<xsd:simpleType name="idType">
+		<xsd:restriction base="xsd:string">
+			<xsd:pattern value="[a-zA-Z][_a-zA-Z0-9]*"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="keyType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="primary"/>
+			<xsd:enumeration value="unique"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+
+	<xsd:simpleType name="referentialActionType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="cascade"/>
+			<xsd:enumeration value="set null"/>
+			<xsd:enumeration value="set default"/>
+			<xsd:enumeration value="no action"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
+	<xsd:simpleType name="sizeType">
+		<xsd:restriction base="xsd:string">
+			<xsd:enumeration value="tiny"/>
+			<xsd:enumeration value="medium"/>
+			<xsd:enumeration value="long"/>
+		</xsd:restriction>
+	</xsd:simpleType>
+	
 </xsd:schema>
